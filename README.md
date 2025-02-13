@@ -69,23 +69,29 @@ Una vez que la aplicación se esté ejecutando, puedes acceder a la documentaci�
 ## Estructura del Proyecto
 
 ```
-.
-├── app/
-│   ├── main.py        # Archivo principal con la configuración de la API
+curso-fastapi-proyect/
+│── app/
 │   ├── routers/
-│   │   ├── customers.py     # Endpoints relacionados con clientes
-│   │   ├── transactions.py  # Endpoints relacionados con transacciones
-│   │   ├── plans.py         # Endpoints relacionados con planes
-├── requirements.txt   # Dependencias del proyecto
-├── models.py      # Modelos de datos con SQLModel
-├── db.py          # Configuración de la base de datos y dependencias
-├── README.md          # Este archivo
+│   │   ├── __init__.py
+│   │   ├── customers.py
+│   │   ├── plans.py
+│   │   ├── transactions.py
+│   ├── __init__.py
+│   ├── main.py
+│── venv/                  # (Entorno virtual)
+│── .gitignore
+│── db.py
+│── db.sqlite3
+│── models.py
+│── README.md
+│── requirements.txt
+
 ```
 
 ## Dependencias
 El proyecto usa las siguientes dependencias:
 ```txt
-fastapi['standard']==0.115.8
+fastapi[standard]==0.115.8
 sqlmodel==0.0.22
 ```
 Puedes instalarlas con:
@@ -109,6 +115,3 @@ Si deseas contribuir, sigue estos pasos:
    git push origin feature/nueva-mejora
    ```
 5. Abre un **Pull Request** en el repositorio principal.
-
-## Licencia
-Este proyecto está bajo la licencia **MIT**. Puedes ver más detalles en el archivo `LICENSE`.
