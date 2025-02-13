@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI # type: ignore
 from datetime import datetime
 from models import Invoice
 from db import create_all_tables
