@@ -1,7 +1,7 @@
 
-from sqlmodel import Session, create_engine, SQLModel
+from sqlmodel import Session, create_engine, SQLModel # type: ignore
 from typing import Annotated
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI # type: ignore
 
 sqlite_name = "db.sqlite3"
 sqlite_url = f"sqlite:///{sqlite_name}"

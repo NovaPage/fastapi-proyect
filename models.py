@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
-from pydantic import BaseModel
-from sqlmodel import SQLModel, Field, Relationship
+from pydantic import BaseModel # type: ignore
+from sqlmodel import SQLModel, Field, Relationship # type: ignore
 
 class StatusEnum(str, Enum):
     ACTIVE = "Active"

@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Query, status, HTTPException
-from sqlmodel import select
+from fastapi import APIRouter, Query, status, HTTPException # type: ignore
+from sqlmodel import select # type: ignore
 from models import Customer, CustomerCreate, CustomerPlan, CustomerUpdate, Plan, StatusEnum
 from db import sessionDep
 
@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.post("/Customers", response_model = Customer, tags=['customers'])
-async def create_customer(customer_data: CustomerCreate, session: sessionDep):
+async def create_customer(customer_data: CustomerCreate, session: sessionDep): # type: ignore
     customer = Customer.model_validate(customer_data.model_dump())
     session.add(customer)
     session.commit()
@@ -16,14 +16,14 @@ async def create_customer(customer_data: CustomerCreate, session: sessionDep):
     return customer
 
 @router.get("/customers/{customer_id}", response_model = Customer, tags=['customers'])
-async def read_customer(customer_id: int, session: sessionDep):
+async def read_customer(customer_id: int, session: sessionDep): # type: ignore
     customer_db = session.get(Customer, customer_id)
     if not customer_db:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="cutomer doesn't exits")
     return customer_db
 
 @router.patch("/customers/{customer_id}", response_model = Customer, status_code = status.HTTP_201_CREATED, tags=['customers'])
-async def read_customer(customer_id: int, customer_data: CustomerUpdate,session: sessionDep):
+async def read_customer(customer_id: int, customer_data: CustomerUpdate,session: sessionDep): # type: ignore
     customer_db = session.get(Customer, customer_id)
     if not customer_db:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="cutomer doesn't exits")
@@ -35,7 +35,7 @@ async def read_customer(customer_id: int, customer_data: CustomerUpdate,session:
     return customer_db
 
 @router.delete("/customers/{customer_id}", tags=['customers'])
-async def delete_customer(customer_id: int, session: sessionDep):
+async def delete_customer(customer_id: int, session: sessionDep): # type: ignore
     customer_db = session.get(Customer, customer_id)
     if not customer_db:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail="cutomer doesn't exits")
@@ -44,14 +44,14 @@ async def delete_customer(customer_id: int, session: sessionDep):
     return {"Detail": "Ok"}
 
 @router.get("/Customers", response_model = list[Customer], tags=['customers'])
-async def list_customer(session: sessionDep):
+async def list_customer(session: sessionDep): # type: ignore
     return session.exec(select(Customer)).all()
     # return db_customers
 
 # customers?key=valor
 
 @router.post("/customer/{customer_id}/plans/{plan_id}", tags=['customers'])
-async def subscribe_customer_to_plan(customer_id: int, plan_id: int, session: sessionDep, plan_status: StatusEnum = Query()):
+async def subscribe_customer_to_plan(customer_id: int, plan_id: int, session: sessionDep, plan_status: StatusEnum = Query()): # type: ignore
     customer_db = session.get(Customer, customer_id)
     plan_db = session.get(Plan, plan_id)
     if not customer_db or not plan_db:
@@ -63,7 +63,7 @@ async def subscribe_customer_to_plan(customer_id: int, plan_id: int, session: se
     return customer_plan_db
 
 @router.get("/customer/{customer_id}/plans", tags=['customers'])
-async def subscribe_customer_to_plan(customer_id: int, session: sessionDep, plan_status: StatusEnum = Query()):
+async def subscribe_customer_to_plan(customer_id: int, session: sessionDep, plan_status: StatusEnum = Query()): # type: ignore
     customer_db = session.get(Customer, customer_id)
 
     if not customer_db:
