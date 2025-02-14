@@ -5,8 +5,6 @@ from db import sessionDep
 
 router = APIRouter()
 
-
-
 @router.post("/Customers", response_model = Customer, tags=['customers'])
 async def create_customer(customer_data: CustomerCreate, session: sessionDep): # type: ignore
     customer = Customer.model_validate(customer_data.model_dump())

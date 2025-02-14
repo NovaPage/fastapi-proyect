@@ -1,7 +1,10 @@
 from enum import Enum
-from typing import Optional
-from pydantic import BaseModel # type: ignore
-from sqlmodel import SQLModel, Field, Relationship # type: ignore
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr, field_validator # type: ignore
+from sqlmodel import SQLModel, Field, Relationship, select # type: ignore
+from db import get_session
+from sqlalchemy.orm import Session  # type: ignore # Para manejar la sesión correctamente con `get_session`
+from db import engine
 
 class StatusEnum(str, Enum):
     ACTIVE = "Active"
@@ -18,39 +21,41 @@ class Plan(SQLModel, table=True):
     name: str = Field(default=None)
     price: int = Field(default=None)
     description: str = Field(default=None)
-    customers: list['Customer'] = Relationship(back_populates="plans", link_model=CustomerPlan)
+    customers: List['Customer'] = Relationship(back_populates="plans", link_model=CustomerPlan)
 
-
-# Opcion 1
-# class CustomerBase(BaseModel):
-#     name: str
-#     descripcion: str | None
-#     email: str
-#     age: int
-
-# opcion 2
 class CustomerBase(SQLModel):
     name: str = Field(default=None)
     descripcion: str | None = Field(default=None)
-    email: str = Field(default=None)
+    email: EmailStr = Field(default=None)
     age: int = Field(default=None)
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, value):
+        session = next(get_session())  # ✅ SOLUCIÓN: Obtiene la sesión de la función generadora
+        try:
+            query = select(Customer).where(Customer.email == value)
+            existing_customer = session.exec(query).first()
+            if existing_customer:
+                raise ValueError("This email is already registered")
+        finally:
+            session.close()  # ✅ Cerrar la sesión para evitar fugas de conexión
+        return value
+
+
+
+
 
 class CustomerCreate(CustomerBase):
     pass
 
-
 class CustomerUpdate(CustomerBase):
     pass
 
-# opcion 1
-# class Customer(CustomerBase, SQLModel, table=True):
-#     id: int | None = None
-
-# opcion 2
 class Customer(CustomerBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    transactions: list["Transaction"] = Relationship(back_populates="customer")
-    plans: list['Plan'] = Relationship(back_populates="customers", link_model=CustomerPlan)
+    transactions: List["Transaction"] = Relationship(back_populates="customer")
+    plans: List['Plan'] = Relationship(back_populates="customers", link_model=CustomerPlan)
 
 class TransactionBase(SQLModel):
     amount: float
@@ -67,9 +72,9 @@ class TransactionCreate(TransactionBase):
 class Invoice(BaseModel):
     id: int
     customer: Customer
-    transaction: list[Transaction]
+    transaction: List[Transaction]
     total: int
 
     @property
-    def ammount_total(self):
-        return sum(transaction.ammount for transaction in self.transaction)
+    def amount_total(self):
+        return sum(transaction.amount for transaction in self.transaction)
